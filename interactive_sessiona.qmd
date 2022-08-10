@@ -2,6 +2,184 @@
 title: "interactive sesh"
 format: html
 editor: visual
+execute:
+  warning: false
+  message: false
 ---
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+library(purrr)
+```
 
-## 
+## My sequence
+
+```{r}
+my_seq <- seq(from = 1, to = 50)
+for (i in my_seq) {
+  if (i%%2 == 0){
+    print("This number is even!")
+  } else 
+    print("This number is odd!")
+}
+```
+
+# For loops
+
+```{r}
+burrito <- 2.4
+
+if (burrito > 2) {
+  print("I love burritos!!")
+}
+
+burrito2 <- 1
+
+if (burrito2 > 2) {
+  print("I love burritos!!")
+}
+```
+
+### My ships
+
+```{r}
+my_ships <- c("Milennium Falcon", "X-wing", "Tie-Fighter", "Death Star")
+
+str_detect(my_ships, pattern = "r")
+
+#case sensitive
+
+tatooine_characters <- starwars |> 
+  filter(homeworld == "Tatooine")
+
+tatooine_characters
+
+# use %in% operator to check for multiple positive matches
+
+tatooine_endor_naboo <- starwars |> 
+  filter(homeworld %in% c("Tatooine", "Endor", "Naboo"))
+#in words, this asks - does the value in the homeworld variable in that row exist in that vector c("Tatooine", "Naboo", "Endor")
+```
+
+```{r}
+phrase <- "I love burritos"
+if (str_detect(phrase, "love")) {
+  print("I am a burrito fan.")
+}
+```
+
+### `if-else` statement
+
+```{r}
+pika <- 89.1
+if (pika > 60) {
+  print("Mega pika")
+} else { print("normal pika")}
+
+  
+```
+
+```{r}
+marmot <- 2.8
+
+if (marmot < 0.5) {
+  print("this is a small marmot")
+} else if (marmot >= 0.5 & marmot < 3) {
+  print ("this is a medium marmot")
+} else {
+  print("This is a large marmot")
+  }
+
+
+```
+
+### `group_by() then summarize()`
+
+```{r}
+penguins
+
+penguins |> group_by(species, island) |> 
+  summarize(mean_bill_length = mean(bill_length_mm, na.rm = TRUE), sd_bill_length = sd(bill_length_mm, na.rm = TRUE))
+```
+
+### find mean and stddev of character height in starwars grouped by homeworld
+
+```{r}
+char_height <- starwars |> group_by(homeworld) |> 
+  summarise(mean_char_height = mean(height), 
+            sd_char_height = sd(height))
+```
+
+### find max, min flipper length, and sample size for each species of penguins
+
+```{r}
+flippers <- penguins |> 
+  group_by(species, sex) |> 
+  summarise(max_flip_length = max(flipper_length_mm, na.rm = TRUE), 
+            min_flip_length = min(flipper_length_mm, na.rm = TRUE))
+```
+```{r}
+penguins |> 
+  group_by(species) |> 
+  summarize(across(where(is.numeric), mean, na.rm = TRUE))
+```
+```{r}
+tree_height <- c(1, 2, 6, 10, 14, 20, 24, 26, 25, 34)
+
+for(i in seq_along(tree_height)) {
+  val = tree_height[i] + tree_height[i + 1]
+  print(val)
+}
+
+```
+
+## for loop w/ conditional statement
+
+```{r}
+species <- c("dog", "elephant", "goat", "elephant", "goat", "dog")
+
+age_human <- c(3, 8, 4, 6, 12, 18)
+
+animal_ages <- vector(mode= "numeric", length = length(species))
+
+for(i in seq_along(species)) {
+  if (species[i] == "dog") {
+    animal_age <- age_human[i] * 7
+  } else if(species[i] == "elephant") {
+    animal_age <- age_human[i] * 0.88
+  } else if(species[i] == "goat") {
+    animal_age <- age_human[i] * 4.7
+  }
+  animal_ages[i] <- animal_age
+}
+
+animal_ages
+
+```
+
+### for loops across data frames
+
+```{r}
+
+mean_mtcars <- vector(mode = "numeric", length = ncol(mtcars))
+
+for(i in 1 : ncol(mtcars)) {
+  mean_col <- mean(mtcars[[i]], na.rm = TRUE)
+  mean_mtcars[[i]] <- mean_col
+  print(mean_mtcars)
+}
+
+```
+
+## Adding syntactic sugar (apply, across, map_df)
+
+```{r}
+apply(X = mtcars, MARGIN = 2, FUN = mean)
+```
+
+```{r}
+map(.x = mtcars, .f = mean)
+
+map_df(.x = mtcars, .f = mean)
+```
+
